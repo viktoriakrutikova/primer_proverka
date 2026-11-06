@@ -50,3 +50,15 @@ def search_from_file():
         print("Корректные выражения:", find_math_expressions(content))
     except FileNotFoundError:
         print(f"Файл '{filename}' не найден.")
+
+def search_from_url(url="https://example.com"):
+    try:
+        response = requests.get(url, timeout=5)
+        response.raise_for_status()
+        print("Корректные выражения:", find_math_expressions(response.text)[:5])
+    except Exception as e:
+        print(f"Ошибка: {e}")
+
+
+if __name__ == "__main__":
+    search_from_user_input()
