@@ -36,3 +36,7 @@ def find_math_expressions(text):
     candidates = re.findall(pattern, text)
     valid_expressions = [expr for expr in candidates if is_syntactically_correct(expr)]
     return list(set(valid_expressions))
+
+def search_from_user_input():
+    user_text = input("Введите текст с математическими выражениями: ")
+    print("Корректные выражения:", find_math_expressions(user_text))
