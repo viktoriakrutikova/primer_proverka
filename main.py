@@ -32,7 +32,7 @@ def is_syntactically_correct(expr):
     return True
 
 def find_math_expressions(text):
-    simple_pattern = (
-        r"\b(?:\d+|[a-zA-Z])\s*[\+\-\*/]\s*(?:\d+|[a-zA-Z])(?:\s*[\+\-\*/]\s*(?:\d+|[a-zA-Z]))*\b"
-    )
-    return re.findall(simple_pattern, text)
+    pattern = r"\b(?:[a-zA-Zа-яА-ЯёЁ]+\s*\([^)]*\)|\d+[a-zA-Z]*|[a-zA-Z]+\d*(?:\^\d+)?|\([^)]+\))(?:\s*[\+\-\*/\^]\s*(?:[a-zA-Zа-яА-ЯёЁ]+\s*\([^)]*\)|\d+[a-zA-Z]*|[a-zA-Z]+\d*(?:\^\d+)?|\([^)]+\)))*"
+    candidates = re.findall(pattern, text)
+    valid_expressions = [expr for expr in candidates if is_syntactically_correct(expr)]
+    return list(set(valid_expressions))
