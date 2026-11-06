@@ -40,3 +40,13 @@ def find_math_expressions(text):
 def search_from_user_input():
     user_text = input("Введите текст с математическими выражениями: ")
     print("Корректные выражения:", find_math_expressions(user_text))
+
+
+def search_from_file():
+    filename = input("Введите имя файла (например, text.txt): ").strip()
+    try:
+        with open(filename, "r", encoding="utf-8") as f:
+            content = f.read()
+        print("Корректные выражения:", find_math_expressions(content))
+    except FileNotFoundError:
+        print(f"Файл '{filename}' не найден.")
