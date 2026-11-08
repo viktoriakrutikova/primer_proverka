@@ -1,64 +1,32 @@
-﻿import re
-import requests
+﻿from parser import find_math_expressions
+from data_sources import get_from_console, get_from_file, get_from_url
 
-def is_syntactically_correct(expr):
-    expr = expr.strip()
-    if not expr:
-        return False
+def main():
+    print("--- Поиск и проверка математических выражений (Слоистая архитектура) ---")
+    print("1. Ввод текста с клавиатуры")
+    print("2. Поиск в файле")
+    print("3. Поиск по URL")
 
-    stack = []
-    for char in expr:
-        if char in "({[":
-            stack.append(char)
-        elif char in ")}]":
-            if not stack:
-                return False
-            top = stack.pop()
-            if (
-                (char == ")" and top != "(")
-                or (char == "}" and top != "{")
-                or (char == "]" and top != "[")
-            ):
-                return False
-    if stack:
-        return False
+    choice = input("Выберите режим (1, 2 или 3): ").strip()
 
-    if re.search(r"[\+\-\*/\^,]\s*$", expr):
-        return False
+    raw_text = ""
 
-    if re.search(r"\(\s*,", expr) or re.search(r",\s*\)", expr):
-        return False
+    if choice == "1":
+        raw_text = get_from_console()
+    elif choice == "2":
+        raw_text = get_from_file()
+    elif choice == "3":
+        raw_text = get_from_url()
+    else:
+        print("Неверный выбор режима.")
+        return
 
-    return True
-
-def find_math_expressions(text):
-    pattern = r"\b(?:[a-zA-Zа-яА-ЯёЁ]+\s*\([^)]*\)|\d+[a-zA-Z]*|[a-zA-Z]+\d*(?:\^\d+)?|\([^)]+\))(?:\s*[\+\-\*/\^]\s*(?:[a-zA-Zа-яА-ЯёЁ]+\s*\([^)]*\)|\d+[a-zA-Z]*|[a-zA-Z]+\d*(?:\^\d+)?|\([^)]+\)))*"
-    candidates = re.findall(pattern, text)
-    valid_expressions = [expr for expr in candidates if is_syntactically_correct(expr)]
-    return list(set(valid_expressions))
-
-def search_from_user_input():
-    user_text = input("Введите текст с математическими выражениями: ")
-    print("Корректные выражения:", find_math_expressions(user_text))
-
-
-def search_from_file():
-    filename = input("Введите имя файла (например, text.txt): ").strip()
-    try:
-        with open(filename, "r", encoding="utf-8") as f:
-            content = f.read()
-        print("Корректные выражения:", find_math_expressions(content))
-    except FileNotFoundError:
-        print(f"Файл '{filename}' не найден.")
-
-def search_from_url(url="https://example.com"):
-    try:
-        response = requests.get(url, timeout=5)
-        response.raise_for_status()
-        print("Корректные выражения:", find_math_expressions(response.text)[:5])
-    except Exception as e:
-        print(f"Ошибка: {e}")
+    if raw_text:
+        results = find_math_expressions(raw_text)
+        print("\nКорректные выражения:")
+        for expr in results:
+            print(f"- {expr}")
 
 
 if __name__ == "__main__":
-    search_from_user_input()
+    main()
